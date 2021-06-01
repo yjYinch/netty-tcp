@@ -1,0 +1,167 @@
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sedwt.alarm.mapper.AlarmSyncMapper">
+    <sql id="alarm_inform_detail">
+        async.unit_id,
+        async.alarm_num,
+        async.alarm_code,
+        async.alarm_name,
+        async.alarm_status,
+        async.alarm_level,
+        async.alarm_type,
+        async.rack_num,
+        async.rack_position_num,
+        async.slot_num,
+        async.port_num,
+        async.station_num,
+        async.alarm_time,
+        async.scope,
+        async.reason,
+        async.subway_num,
+        async.number,
+        async.advise
+    </sql>
+
+
+    <select id="getAlarmSync" resultType="com.sedwt.alarm.client.entity.AlarmSyncBean">
+        SELECT
+        <include refid="alarm_inform_detail"/>
+        FROM alarm_sync async
+        WHERE 1=1
+        <!--按照告警状态查询 -->
+        <if test="alarmStatus !=null">
+            AND async.alarm_status = #{alarmStatus}
+        </if>
+        <if test="alarmName !=null">
+            AND async.alarm_name = #{alarmName}
+        </if>
+        <if test="portNum !=null">
+            AND async.port_num = #{portNum}
+        </if>
+        <if test="equipmentType !=null">
+            AND async.equipment_type = #{equipmentType}
+        </if>
+    </select>
+
+    <select id="getAlarmSyncSingle" resultType="com.sedwt.alarm.client.entity.AlarmSyncBean">
+        SELECT
+        <include refid="alarm_inform_detail"/>
+        FROM
+        alarm_sync async
+        WHERE
+        async.alarm_status = '1'
+        AND async.alarm_code = #{alarmCode}
+        AND async.port_num = #{portNum}
+        AND async.unit_id = #{unitId}
+        <if test="equipmentType !=null">
+            AND async.equipment_type = #{equipmentType}
+        </if>
+    </select>
+
+    <insert id="insertAlarmSync">
+        INSERT INTO
+        alarm_sync(unit_id, alarm_num, alarm_code, alarm_name, alarm_status,
+        <if test="alarmLevel !=null">
+            alarm_level,
+        </if>
+        <if test="alarmType !=null">
+            alarm_type,
+        </if>
+        <if test="equipmentType !=null">
+            equipment_type,
+        </if>
+        <if test="rackNum !=null">
+            rack_num,
+        </if>
+        <if test="rackPositionNum !=null">
+            rack_position_num,
+        </if>
+        <if test="slotNum !=null">
+            slot_num,
+        </if>
+        <if test="portNum !=null">
+            port_num,
+        </if>
+        <if test="stationNum !=null">
+            station_num,
+        </if>
+        <if test="subwayNum !=null">
+            subway_num,
+        </if>
+        <if test="number !=null">
+            number,
+        </if>
+        alarm_time)
+        VALUES
+        (#{unitId}, #{alarmNum}, #{alarmCode}, #{alarmName}, #{alarmStatus},
+        <if test="alarmLevel !=null">
+            #{alarmLevel},
+        </if>
+        <if test="alarmType !=null">
+            #{alarmType},
+        </if>
+        <if test="equipmentType !=null">
+            #{equipmentType},
+        </if>
+        <if test="rackNum !=null">
+            #{rackNum},
+        </if>
+        <if test="rackPositionNum !=null">
+            #{rackPositionNum},
+        </if>
+        <if test="slotNum !=null">
+            #{slotNum},
+        </if>
+        <if test="portNum !=null">
+            #{portNum},
+        </if>
+        <if test="stationNum !=null">
+            #{stationNum},
+        </if>
+        <if test="subwayNum !=null">
+            #{subwayNum},
+        </if>
+        <if test="number !=null">
+            #{number},
+        </if>
+        #{alarmTime})
+--         ON CONFLICT(unit_id, alarm_code, port_num, equipment_type) DO NOTHING
+    </insert>
+
+    <delete id="deleteAlarmSync">
+        DELETE FROM
+        alarm_sync
+        WHERE
+        unit_id = #{unitId}
+        AND alarm_code= #{alarmCode}
+        <if test="portNum !=null">
+            AND port_num= #{portNum}
+        </if>
+        <if test="equipmentType != null">
+            AND equipment_type = #{equipmentType}
+        </if>
+    </delete>
+
+    <update id="updateAlarmSync">
+        UPDATE
+        alarm_sync
+        SET alarm_time = #{alarmTime}
+        WHERE
+        unit_id = #{unitId}
+        AND alarm_code= #{alarmCode}
+        <if test="portNum !=null">
+            AND port_num= #{portNum}
+        </if>
+    </update>
+
+    <select id="getAlarmSyncInfo" resultType="com.sedwt.alarm.client.entity.PandaAlarmBean">
+        SELECT als.unit_id,als.alarm_status,als.alarm_code,als.alarm_level,als.port_num as module_no
+        FROM alarm_sync als
+        where als.alarm_status = 1 and als.equipment_type = 'Panda'
+        <if test="unitId != null">
+            and als.unit_id = #{unitId}
+        </if>
+    </select>
+
+</mapper>

@@ -1,0 +1,28 @@
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sedwt.alarm.mapper.StatusSyncMapper">
+
+    <select id="getUnit" resultType="java.lang.Integer">
+        select u.id
+        from unit u,
+             location l,
+             subway s
+        where u.location_id = l.id
+          and l.subway_id = s.id
+          and l.number = #{deviceNo}
+          and s.subway_num like concat('%', #{subwayNo})
+    </select>
+
+    <select id="getCommStatus" resultType="com.sedwt.alarm.client.entity.PandaAlarmBean">
+        select u.id     as unit_id,
+               l.number as device_no,
+               s.subway_num,
+               u.is_online
+        from unit u,
+             location l,
+             subway s
+        where u.location_id = l.id
+          and l.subway_id = s.id;
+    </select>
+</mapper>

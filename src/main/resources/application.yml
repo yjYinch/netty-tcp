@@ -1,0 +1,34 @@
+server:
+  port: 8302 #alarm服务的端口号
+  servlet:
+    context-path: /alarm
+
+logging:
+  config: classpath:logback.xml # 日志配置的位置
+
+spring:
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
+  profiles:
+    active: dev #配置文件生效的设置，默认为dev
+  redis:
+    database: 2
+
+#mybatis-plus config的相关配置
+mybatis-plus:
+  mapper-locations: classpath:mapper/*Mapper.xml
+  type-aliases-package: com.sedwt.alarm.enity
+  configuration:
+    map-underscore-to-camel-case: true
+    #log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  global-config:
+    db-config:
+      id-type: auto
+
+thread:
+  pool:
+    core-size: 10
+    max-size: 10
+    max-queue-capacity: 20
+    max-alive-time: 30
